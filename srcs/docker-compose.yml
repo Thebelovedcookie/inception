@@ -1,35 +1,17 @@
-# services:
-#   web:
-#     build: dossier ou se trouve le docker files en partant de la ou est le docker compose ex : ./requirements/wordpress
-#     networks:
-#     volume: // sert a garder les docker 
-#     ports:
-#     - '443'
-
-#   nginx:
-#     image:
-#     ports:
-#     - '9000'
-
-#   wordpress+php:
-#     image:
-#     ports:
-#     - '3306'
-#   db:
-#     image:
-
-
 services:
   nginx:
     image: custom-nginx:1
     build: ./requirements/nginx/
     ports:
-      - '9000'
+      - '443'
+    depends_on:
+      - wordpress
 
   wordpress:
-      images:
+      image: custom-wordpress:1
+      build: ./requirements/wordpress/
       ports:
-        - '3306'
+        - '9000'
       volumes:
         - wordpress:/
 
@@ -42,11 +24,13 @@ services:
         WORDPRESS_CONFIG_EXTRA: |
           define('WPLANG', 'fr_FR'); # Définit la langue par défaut
       depends_on:
-        db
+        mariadb
 
-  db:
-    image:
-    ports:
+  mariadb:
+      image: custom-mariadb:1
+      build: ./requirements/mariadb/
+      ports:
+        -'3306'
 
   volumes:
   -

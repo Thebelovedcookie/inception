@@ -1,19 +1,35 @@
-#has to build docker-images using the docker-compose.yml
-MARIADB ?= username
-WORDPRESS ?= 
-NGINX ?=
-APPLICATION_NAME ?= hello-world
-GIT_HASH ?= $(shell git log --format="%h" -n 1) #(pour le tag)
-
-all : 
-		build
+DC = ./srcs/docker-compose.yml
+# .PHONY: help build up start down destroy stop restart logs logs-api ps login-timescale login-api db-shell
 build:
-        docker build --tag ${DOCKER_USERNAME}/${APPLICATION_NAME} .
+	docker compose -f $(DC) build $(c)
+up:
+	docker compose -f $(DC) up -d $(c)
+start:
+	docker compose -f $(DC) start $(c)
+down:
+	docker compose -f $(DC) down $(c)
+destroy:
+	docker compose -f $(DC) down -v $(c)
+stop:
+	docker compose -f $(DC) stop $(c)
+restart:
+	docker compose -f $(DC) stop $(c)
+	docker compose -f $(DC) up -d $(c)
+logs:
+	docker compose -f $(DC) logs --tail=100 -f $(c)
+ps:
+	docker compose -f $(DC) ps
+login:
+	docker compose -f $(DC) exec $(c) /bin/bash
 
-run :
-		docker run -it [nom de l image] :version de l image(tag)
-
-release:
-        docker pull ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
-        docker tag  ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} 
-        docker push ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
+help:
+	echo    "build  : Services are built once and then tagged, by default as project-service."
+	echo    "up     : Builds, (re)creates, starts, and attaches to containers for a service."
+	echo    "start  : Starts existing containers for a service."
+	echo    "down   : Stops containers and removes containers, networks, volumes, and images created by up."
+	echo    "destroy: Remove named volumes declared in the "volumes" section of the Compose file and anonymous volumes attached to containers."
+	echo    "stop   : Stops running containers without removing them. They can be started again with docker compose start."
+	echo    "restart: Restarts existing containers for a service."
+	echo    "logs   : Displays log output from services."
+	echo    "ps     : Lists containers for a Compose project, with current status and exposed ports."
+	echo    "login  : This is the equivalent of docker exec targeting a Compose service."
