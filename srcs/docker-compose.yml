@@ -1,0 +1,52 @@
+# services:
+#   web:
+#     build: dossier ou se trouve le docker files en partant de la ou est le docker compose ex : ./requirements/wordpress
+#     networks:
+#     volume: // sert a garder les docker 
+#     ports:
+#     - '443'
+
+#   nginx:
+#     image:
+#     ports:
+#     - '9000'
+
+#   wordpress+php:
+#     image:
+#     ports:
+#     - '3306'
+#   db:
+#     image:
+
+
+services:
+  nginx:
+    image: custom-nginx:1
+    build: ./requirements/nginx/
+    ports:
+      - '9000'
+
+  wordpress:
+      images:
+      ports:
+        - '3306'
+      volumes:
+        - wordpress:/
+
+      environment:
+        WORDPRESS_DB_HOST: db
+        WORDPRESS_DB_USER: wordpress
+        WORDPRESS_DB_PASSWORD: wordpress
+        WORDPRESS_DB_NAME: wordpress
+        WORDPRESS_TABLE_PREFIX: wp_
+        WORDPRESS_CONFIG_EXTRA: |
+          define('WPLANG', 'fr_FR'); # Définit la langue par défaut
+      depends_on:
+        db
+
+  db:
+    image:
+    ports:
+
+  volumes:
+  -
