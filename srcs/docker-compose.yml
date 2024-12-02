@@ -1,36 +1,71 @@
 services:
   nginx:
-    image: custom-nginx:1
+    container_name: nginx
+    image: nginx:1
     build: ./requirements/nginx/
     ports:
-      - '443'
+      - '443:443'
+    volumes:
+      - wordpress:/var/www/html
+    env_file:
+      - .env
     depends_on:
       - wordpress
+    networks:
+      - wordpress-network
+    restart: always
 
   wordpress:
-      image: custom-wordpress:1
-      build: ./requirements/wordpress/
-      ports:
-        - '9000'
-      volumes:
-        - wordpress:/
+    container_name: wordpress
+    image: wordpress:1
+    build: ./requirements/wordpress/
+    ports:
+      - '9000:9000'
+    volumes:
+      - wordpress:/var/www/html
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    networks:
+      - wordpress-network
+    restart: always
 
-      environment:
-        WORDPRESS_DB_HOST: db
-        WORDPRESS_DB_USER: wordpress
-        WORDPRESS_DB_PASSWORD: wordpress
-        WORDPRESS_DB_NAME: wordpress
-        WORDPRESS_TABLE_PREFIX: wp_
-        WORDPRESS_CONFIG_EXTRA: |
-          define('WPLANG', 'fr_FR'); # Définit la langue par défaut
-      depends_on:
-        mariadb
-
+    
   mariadb:
-      image: custom-mariadb:1
-      build: ./requirements/mariadb/
-      ports:
-        -'3306'
+    container_name: mariadb
+    image: mariadb:1
+    build: ./requirements/mariadb/
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb:/var/lib/mysql
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 5s
+      retries: 5
+    networks:
+      - wordpress-network
+    restart: always
 
-  volumes:
-  -
+#device : /home/mmahfoud/data/mariadb
+volumes:
+  mariadb:
+    name: mariadb
+    driver: local
+    driver_opts:
+      type : none
+      device: /home/user/data/mariadb
+      o : bind
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      type : none
+      device: /home/user/data/wordpress
+      o : bind
+networks:
+  wordpress-network:
+    driver: bridge

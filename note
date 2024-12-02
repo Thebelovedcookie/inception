@@ -44,3 +44,17 @@ bidden to pull ready-made Docker images, as well as using services such as Docke
 
 /************************************************/
 
+ajouter la certification dans /usr/local/share/ca-certificates/
+open ssl
+
+sudo update-ca-certificates
+
+https://www.linuxtricks.fr/wiki/openssl-creation-de-certificats-et-ca-autosignes
+
+sudo vim /etc/hosts
+rajouter mmahfoud42 sur la ligne localhost
+
+docker build --progress=plain --no-cache srcs/requirements/wordpress/ 
+
+pour voir tout ce que docker fait sur le moment 
+marche aussi avec docker compose
