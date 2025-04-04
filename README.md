@@ -1,7 +1,7 @@
 # Inception project : learn about Docker
-Inception is a project in which we create several docker containers from scratch. We will virtualize several Docker images , creating them in our personal virtual machine (Debian).
+Inception is a project in which i will create several docker containers from scratch. I will virtualize several Docker images, creating them in my personal virtual machine (Debian).
 
-You will learned how to write a dockerfile, docker-compose, and use docker commands.
+I learned how to write a dockerfile, docker-compose, and use docker commands.
 
 ## Services
 - create 3 containers
